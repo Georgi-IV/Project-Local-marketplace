@@ -1,0 +1,82 @@
+.home-page {
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(120deg, #0f1b2a 0%, #17314d 35%, #07111d 100%);
+  color: #fff;
+  padding: 3rem 1rem;
+}
+
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.home-page h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  background: linear-gradient(135deg, #7bf3f0, #57dfe1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.home-page > div > p {
+  font-size: 1.2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 3rem;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.card {
+  padding: 2rem;
+  border-radius: 16px;
+  background: rgba(10, 18, 32, 0.6);
+  border: 1px solid rgba(123, 243, 240, 0.15);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.card:hover {
+  border-color: rgba(123, 243, 240, 0.4);
+  background: rgba(10, 18, 32, 0.8);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(123, 243, 240, 0.1);
+}
+
+.card-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.8rem;
+  color: #7bf3f0;
+}
+
+.card p {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .home-page h1 {
+    font-size: 2rem;
+  }
+
+  .home-page > div > p {
+    font-size: 1rem;
+  }
+
+  .home-grid {
+    grid-template-columns: 1fr;
+  }
+}

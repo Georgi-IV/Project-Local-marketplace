@@ -1,0 +1,108 @@
+.signup-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(120deg, #0f1b2a 0%, #17314d 35%, #07111d 100%);
+  color: #fff;
+  padding: 1rem;
+}
+
+.signup-card {
+  width: 100%;
+  max-width: 450px;
+  padding: 2.5rem;
+  border-radius: 16px;
+  background: rgba(10, 18, 32, 0.75);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px);
+}
+
+.signup-card h1 {
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.signup-card label {
+  display: block;
+  margin-top: 1.2rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.signup-card input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(123, 243, 240, 0.15);
+  background: rgba(10, 18, 32, 0.5);
+  color: #fff;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.signup-card input:focus {
+  outline: none;
+  border-color: rgba(123, 243, 240, 0.4);
+  background: rgba(10, 18, 32, 0.8);
+  box-shadow: 0 0 12px rgba(123, 243, 240, 0.1);
+}
+
+.signup-card input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.signup-card button {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 1rem;
+  border: none;
+  border-radius: 12px;
+  background: #7bf3f0;
+  color: #07111d;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.signup-card button:hover {
+  background: #57dfe1;
+}
+
+.login-link {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.login-link a {
+  color: #7bf3f0;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.login-link a:hover {
+  color: #57dfe1;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .signup-card {
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+
+  .signup-card h1 {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .signup-card label {
+    margin-top: 1rem;
+  }
+}

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./login.css";
 
 export default function Login() {
@@ -16,6 +17,10 @@ export default function Login() {
           />
           <button type="submit">Sign in</button>
         </form>
+
+        <p className="signup-link">
+          Don't have an account? <Link to="/signup">Click here to sign up</Link>
+        </p>
       </div>
     </div>
   );

@@ -59,3 +59,22 @@
 .login-card button:hover {
   background: #57dfe1;
 }
+
+.signup-link {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.signup-link a {
+  color: #7bf3f0;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.signup-link a:hover {
+  color: #57dfe1;
+  text-decoration: underline;
+}
