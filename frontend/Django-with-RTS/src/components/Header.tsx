@@ -1,13 +1,18 @@
 import { useState } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "./header.css";
 
 export default function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const isHome = location.pathname === "/home";
   const isAbout = location.pathname === "/about";
+  const isBrowseServices = location.pathname === "/browse-services";
+  const isConnect = location.pathname === "/connect";
 
   // Don't show header on login/signup pages
   if (location.pathname === "/login" || location.pathname === "/signup") {
@@ -27,6 +32,18 @@ export default function Header() {
           <Link to="/home" className={`nav-link ${isHome ? "active" : ""}`}>
             Home
           </Link>
+          <Link
+            to="/browse-services"
+            className={`nav-link ${isBrowseServices ? "active" : ""}`}
+          >
+            Browse Services
+          </Link>
+          <Link
+            to="/connect"
+            className={`nav-link ${isConnect ? "active" : ""}`}
+          >
+            Connect
+          </Link>
           <Link to="/about" className={`nav-link ${isAbout ? "active" : ""}`}>
             About
           </Link>
@@ -34,28 +51,42 @@ export default function Header() {
 
         {/* Right side */}
         <div className="header-right">
-          {/* Profile circle */}
-          <div className="profile-circle"></div>
+          {/* Profile or Login Button */}
+          {isLoggedIn ? (
+            <button
+              className="profile-circle"
+              onClick={() => navigate("/profile")}
+              title="Go to profile"
+            ></button>
+          ) : (
+            <button className="login-btn" onClick={() => navigate("/login")}>
+              Login
+            </button>
+          )}
 
           {/* Hamburger menu */}
-          <button
-            className="hamburger"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle menu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
+          {isLoggedIn && (
+            <>
+              <button
+                className="hamburger"
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-label="Toggle menu"
+              >
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
 
-          {/* Expandable menu */}
-          {menuOpen && (
-            <div className="menu-dropdown">
-              <a href="#settings">Settings</a>
-              <a href="#advanced">Advanced</a>
-              <a href="#info">Info</a>
-              <a href="#more">More</a>
-            </div>
+              {/* Expandable menu */}
+              {menuOpen && (
+                <div className="menu-dropdown">
+                  <a href="#settings">Settings</a>
+                  <a href="#advanced">Advanced</a>
+                  <a href="#info">Info</a>
+                  <a href="#more">More</a>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

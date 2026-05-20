@@ -51,6 +51,16 @@
   box-shadow: 0 20px 40px rgba(123, 243, 240, 0.1);
 }
 
+.card.clickable {
+  cursor: pointer;
+}
+
+.card.clickable:hover {
+  border-color: rgba(123, 243, 240, 0.6);
+  background: rgba(10, 18, 32, 0.9);
+  transform: translateY(-8px);
+}
+
 .card-icon {
   font-size: 3rem;
   margin-bottom: 1rem;

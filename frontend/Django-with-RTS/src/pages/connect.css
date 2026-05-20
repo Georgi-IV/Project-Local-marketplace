@@ -1,0 +1,178 @@
+.connect-page {
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(120deg, #0f1b2a 0%, #17314d 35%, #07111d 100%);
+  color: #fff;
+  padding: 3rem 1rem;
+}
+
+.connect-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.connect-page h1 {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #7bf3f0, #57dfe1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.connect-container > p {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+}
+
+.people-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.person-card {
+  border-radius: 12px;
+  background: rgba(10, 18, 32, 0.6);
+  border: 1px solid rgba(123, 243, 240, 0.15);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.person-card:hover {
+  border-color: rgba(123, 243, 240, 0.4);
+  background: rgba(10, 18, 32, 0.8);
+  box-shadow: 0 10px 30px rgba(123, 243, 240, 0.1);
+}
+
+.person-main {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.person-avatar {
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7bf3f0, #57dfe1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #07111d;
+  font-size: 1.2rem;
+}
+
+.person-details {
+  flex-grow: 1;
+}
+
+.person-details h3 {
+  font-size: 1.3rem;
+  margin: 0 0 0.3rem 0;
+  color: #fff;
+}
+
+.person-details .location {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+.rating {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+}
+
+.expand-btn {
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(123, 243, 240, 0.3);
+  background: transparent;
+  color: #7bf3f0;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 45px;
+  height: 45px;
+}
+
+.expand-btn:hover {
+  background: rgba(123, 243, 240, 0.15);
+  border-color: rgba(123, 243, 240, 0.5);
+}
+
+.person-skills {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  border-top: 1px solid rgba(123, 243, 240, 0.1);
+}
+
+.person-skills h4 {
+  color: #7bf3f0;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.skill {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  background: rgba(123, 243, 240, 0.15);
+  border: 1px solid rgba(123, 243, 240, 0.3);
+  color: #7bf3f0;
+  font-size: 0.9rem;
+}
+
+.btn-contact {
+  width: 100%;
+  padding: 0.9rem;
+  border-radius: 8px;
+  border: none;
+  background: #7bf3f0;
+  color: #07111d;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-contact:hover {
+  background: #57dfe1;
+}
+
+.placeholder-message {
+  text-align: center;
+  padding: 2rem;
+  border-radius: 12px;
+  background: rgba(123, 243, 240, 0.05);
+  border: 1px dashed rgba(123, 243, 240, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 768px) {
+  .connect-page h1 {
+    font-size: 1.8rem;
+  }
+
+  .person-main {
+    gap: 1rem;
+  }
+
+  .person-details h3 {
+    font-size: 1.1rem;
+  }
+}
