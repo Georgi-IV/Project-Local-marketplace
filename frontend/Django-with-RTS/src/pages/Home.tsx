@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./home.css";
 
 export default function Home() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
 
   const handleCardClick = (path: string) => {
@@ -18,7 +18,11 @@ export default function Home() {
     <div className="home-page">
       <div className="home-container">
         <h1>Welcome to LOMarketplace</h1>
-        <p>Share your skills and connect with people who need your help.</p>
+        <p>
+          {isLoggedIn
+            ? `Hi ${user?.name || user?.email}! You are signed in and ready to explore.`
+            : "Share your skills and connect with people who need your help."}
+        </p>
         <div className="home-grid">
           <div
             className="card clickable"

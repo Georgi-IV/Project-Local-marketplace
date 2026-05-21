@@ -91,18 +91,21 @@
   text-decoration: underline;
 }
 
-@media (max-width: 768px) {
-  .signup-card {
-    padding: 1.5rem;
-    max-width: 100%;
-  }
+.signup-status {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+}
 
-  .signup-card h1 {
-    font-size: 1.6rem;
-    margin-bottom: 1.5rem;
-  }
+.signup-status.success {
+  background: rgba(51, 181, 117, 0.15);
+  color: #b6f2d3;
+  border: 1px solid rgba(51, 181, 117, 0.35);
+}
 
-  .signup-card label {
-    margin-top: 1rem;
-  }
+.signup-status.error {
+  background: rgba(255, 84, 84, 0.15);
+  color: #ffd1d1;
+  border: 1px solid rgba(255, 84, 84, 0.35);
 }

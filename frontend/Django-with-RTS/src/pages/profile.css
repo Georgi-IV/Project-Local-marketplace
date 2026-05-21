@@ -27,6 +27,12 @@
   min-width: 120px;
   border-radius: 50%;
   background: linear-gradient(135deg, #7bf3f0, #57dfe1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #07111d;
+  font-size: 2.2rem;
+  font-weight: 700;
 }
 
 .profile-info h1 {
@@ -67,26 +73,44 @@
   margin-bottom: 1.5rem;
 }
 
-.profile-section p {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 0.8rem;
-}
+  .profile-form {
+    display: grid;
+    gap: 1rem;
+  }
 
-.skills-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
+  .profile-form label {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+  }
 
-.skill-tag {
-  padding: 0.7rem 1.2rem;
-  border-radius: 20px;
-  background: rgba(123, 243, 240, 0.15);
-  border: 1px solid rgba(123, 243, 240, 0.3);
-  color: #7bf3f0;
-  font-size: 0.95rem;
-}
+  .profile-form input {
+    width: 100%;
+    padding: 0.95rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(123, 243, 240, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 1rem;
+  }
+
+  .profile-form input:focus {
+    outline: none;
+    border-color: rgba(123, 243, 240, 0.45);
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .profile-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .profile-status {
+    margin-top: 1rem;
+    color: #b6f2d3;
+    font-size: 0.95rem;
+  }
 
 .btn-secondary,
 .btn-danger {

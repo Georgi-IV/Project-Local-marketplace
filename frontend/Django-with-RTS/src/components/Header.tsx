@@ -6,7 +6,7 @@ import "./header.css";
 export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const isHome = location.pathname === "/home";
@@ -56,8 +56,17 @@ export default function Header() {
             <button
               className="profile-circle"
               onClick={() => navigate("/profile")}
-              title="Go to profile"
-            ></button>
+              title={user?.name ? `${user.name}'s profile` : "Go to profile"}
+            >
+              {user?.name
+                ? user.name
+                    .split(" ")
+                    .filter(Boolean)
+                    .map((part) => part[0].toUpperCase())
+                    .slice(0, 2)
+                    .join("")
+                : "P"}
+            </button>
           ) : (
             <button className="login-btn" onClick={() => navigate("/login")}>
               Login

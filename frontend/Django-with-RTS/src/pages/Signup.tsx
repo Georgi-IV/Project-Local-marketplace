@@ -1,6 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "./signup.css";
+
+const BACKEND_URL = "http://127.0.0.1:8000/api/register/";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -10,6 +13,10 @@ export default function Signup() {
     password: "",
     phone: "",
   });
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [isError, setIsError] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -19,10 +26,35 @@ export default function Signup() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Sign up data:", formData);
-    // Handle sign up logic here
+    setStatusMessage(null);
+    setIsError(false);
+
+    try {
+      const response = await fetch(BACKEND_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errors = typeof data === "object" ? JSON.stringify(data) : data;
+        setStatusMessage(`Registration failed: ${errors}`);
+        setIsError(true);
+        return;
+      }
+
+      login(data.user);
+      navigate("/home");
+    } catch (error) {
+      setStatusMessage("Unable to reach the server. Please try again later.");
+      setIsError(true);
+    }
   };
 
   return (
@@ -85,6 +117,12 @@ export default function Signup() {
 
           <button type="submit">Sign Up</button>
         </form>
+
+        {statusMessage ? (
+          <div className={`signup-status ${isError ? "error" : "success"}`}>
+            {statusMessage}
+          </div>
+        ) : null}
 
         <p className="login-link">
           Already have an account?{" "}
