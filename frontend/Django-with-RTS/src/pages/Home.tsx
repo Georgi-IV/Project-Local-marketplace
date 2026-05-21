@@ -40,10 +40,13 @@ export default function Home() {
             <h3>Connect</h3>
             <p>Meet and connect with skilled people near you.</p>
           </div>
-          <div className="card">
+          <div
+            className="card clickable"
+            onClick={() => handleCardClick("/local-sellers")}
+          >
             <div className="card-icon">🏪</div>
             <h3>Local Sellers</h3>
-            <p>Coming soon.</p>
+            <p>Find local sellers near you and browse nearby offers.</p>
           </div>
         </div>
       </div>

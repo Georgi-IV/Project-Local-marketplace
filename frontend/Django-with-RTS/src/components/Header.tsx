@@ -13,6 +13,7 @@ export default function Header() {
   const isAbout = location.pathname === "/about";
   const isBrowseServices = location.pathname === "/browse-services";
   const isConnect = location.pathname === "/connect";
+  const isLocalSellers = location.pathname === "/local-sellers";
 
   // Don't show header on login/signup pages
   if (location.pathname === "/login" || location.pathname === "/signup") {
@@ -43,6 +44,12 @@ export default function Header() {
             className={`nav-link ${isConnect ? "active" : ""}`}
           >
             Connect
+          </Link>
+          <Link
+            to="/local-sellers"
+            className={`nav-link ${isLocalSellers ? "active" : ""}`}
+          >
+            Local Sellers
           </Link>
           <Link to="/about" className={`nav-link ${isAbout ? "active" : ""}`}>
             About

@@ -8,6 +8,7 @@ import About from "./pages/About.tsx";
 import Profile from "./pages/Profile.tsx";
 import BrowseServices from "./pages/BrowseServices.tsx";
 import Connect from "./pages/Connect.tsx";
+import LocalSellers from "./pages/LocalSellers.tsx";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/browse-services" element={<BrowseServices />} />
           <Route path="/connect" element={<Connect />} />
+          <Route path="/local-sellers" element={<LocalSellers />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>
