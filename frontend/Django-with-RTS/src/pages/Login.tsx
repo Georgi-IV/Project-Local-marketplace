@@ -41,8 +41,12 @@ export default function Login() {
 
       const data = await response.json();
       if (!response.ok) {
-        const errors = typeof data === "object" ? JSON.stringify(data) : data;
-        setStatusMessage(`Login failed: ${errors}`);
+        if (response.status === 400) {
+          setStatusMessage("Wrong email or password!");
+        } else {
+          const errors = typeof data === "object" ? JSON.stringify(data) : data;
+          setStatusMessage(`Login failed: ${errors}`);
+        }
         return;
       }
 

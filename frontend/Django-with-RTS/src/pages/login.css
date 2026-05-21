@@ -64,14 +64,13 @@
     margin-top: 1rem;
     padding: 0.9rem 1rem;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 90, 90, 0.18);
     color: #fff;
     font-size: 0.95rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 90, 90, 0.35);
   }
 
   .signup-link {
-  margin-top: 1.5rem;
   text-align: center;
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.7);
