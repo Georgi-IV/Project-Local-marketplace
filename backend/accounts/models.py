@@ -9,3 +9,30 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.email or self.user.username
+
+
+class ServiceRequest(models.Model):
+    URGENCY_CHOICES = [
+        ("urgent", "Urgent"),
+        ("normal", "Normal"),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="service_requests",
+    )
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    location = models.CharField(max_length=255)
+    urgency = models.CharField(max_length=10, choices=URGENCY_CHOICES, default="normal")
+    icon = models.CharField(max_length=5, default="🛠️")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.title

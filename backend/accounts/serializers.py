@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Profile
+from .models import Profile, ServiceRequest
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -36,6 +36,12 @@ class RegisterSerializer(serializers.Serializer):
         )
 
         return user
+
+
+class ServiceRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceRequest
+        fields = ["id", "title", "description", "location", "urgency", "icon"]
 
 
 class LoginSerializer(serializers.Serializer):

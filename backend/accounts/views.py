@@ -4,7 +4,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .serializers import LoginSerializer, RegisterSerializer
+from .serializers import LoginSerializer, RegisterSerializer, ServiceRequestSerializer
+from .models import ServiceRequest
 
 
 def _build_user_payload(user):
@@ -46,6 +47,13 @@ def register(request):
         )
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
+def services(request):
+    services = ServiceRequest.objects.all()
+    serializer = ServiceRequestSerializer(services, many=True)
+    return Response(serializer.data)
 
 
 @api_view(["POST"])
