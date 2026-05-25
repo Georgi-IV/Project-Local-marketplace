@@ -35,7 +35,7 @@ export default function LocalSellers() {
   useEffect(() => {
     async function loadServices() {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/services/", {
+        const response = await fetch("http://127.0.0.1:8000/api/services/?post_type=offer", {
           credentials: "include",
         });
         if (!response.ok) {
@@ -68,13 +68,15 @@ export default function LocalSellers() {
     setErrorMessage(null);
 
     try {
+      const payload = { ...formData, post_type: "offer", icon: "🛒" };
+
       const response = await fetch("http://127.0.0.1:8000/api/services/", {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();

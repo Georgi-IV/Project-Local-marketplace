@@ -45,6 +45,7 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
         model = ServiceRequest
         fields = [
             "id",
+            "post_type",
             "title",
             "description",
             "location",

@@ -14,7 +14,13 @@ class Profile(models.Model):
 class ServiceRequest(models.Model):
     URGENCY_CHOICES = [
         ("urgent", "Urgent"),
+        ("soon", "Soon"),
+        ("whenever", "Whenever"),
         ("normal", "Normal"),
+    ]
+    POST_TYPE_CHOICES = [
+        ("need", "Need"),
+        ("offer", "Offer"),
     ]
 
     user = models.ForeignKey(
@@ -25,6 +31,7 @@ class ServiceRequest(models.Model):
         related_name="service_requests",
     )
     creator_name = models.CharField(max_length=150, blank=True)
+    post_type = models.CharField(max_length=10, choices=POST_TYPE_CHOICES, default="need")
     title = models.CharField(max_length=255)
     description = models.TextField()
     location = models.CharField(max_length=255)

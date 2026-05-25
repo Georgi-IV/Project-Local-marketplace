@@ -10,6 +10,113 @@
   margin: 0 auto;
 }
 
+.services-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.btn-add-request {
+  padding: 0.9rem 1.4rem;
+  border-radius: 999px;
+  border: none;
+  background: #7bf3f0;
+  color: #07111d;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.btn-add-request:hover {
+  transform: translateY(-2px);
+  background: #5dd9d2;
+}
+
+.create-balloon {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(123, 243, 240, 0.18);
+  padding: 1.8rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.create-balloon h2 {
+  margin: 0 0 1rem;
+  font-size: 1.6rem;
+  color: #fff;
+}
+
+.create-balloon label {
+  display: block;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+}
+
+.create-balloon input,
+.create-balloon textarea,
+.create-balloon select {
+  width: 100%;
+  margin-top: 0.4rem;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(123, 243, 240, 0.2);
+  background: rgba(10, 18, 32, 0.8);
+  color: #fff;
+  outline: none;
+}
+
+.create-balloon textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.create-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.btn-submit,
+.btn-cancel {
+  padding: 0.85rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.btn-submit {
+  background: #7bf3f0;
+  color: #07111d;
+}
+
+.btn-cancel {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.btn-submit:hover,
+.btn-cancel:hover {
+  opacity: 0.95;
+}
+
+.form-error {
+  color: #ff8b8b;
+  margin-top: 0.5rem;
+}
+
+.service-meta {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.95rem;
+  margin: 0.75rem 0 0.5rem;
+}
+
 .browse-services-page h1 {
   font-size: 2.5rem;
   text-align: center;
@@ -86,6 +193,18 @@
   background: rgba(255, 87, 87, 0.3);
   color: #ff5757;
   border: 1px solid rgba(255, 87, 87, 0.5);
+}
+
+.urgency-badge.soon {
+  background: rgba(255, 200, 87, 0.25);
+  color: #ffd166;
+  border: 1px solid rgba(255, 200, 87, 0.5);
+}
+
+.urgency-badge.whenever {
+  background: rgba(123, 243, 240, 0.18);
+  color: #7bf3f0;
+  border: 1px solid rgba(123, 243, 240, 0.28);
 }
 
 .service-description {

@@ -59,17 +59,26 @@ def services(request):
     if request.method == "POST":
         serializer = ServiceRequestSerializer(data=request.data)
         if serializer.is_valid():
-            creator_name = None
+            # determine post type (need or offer)
+            post_type = request.data.get("post_type", "need")
             if request.user.is_authenticated:
                 creator_name = request.user.first_name or request.user.email
+            else:
+                creator_name = "Anonymous"
             serializer.save(
                 user=request.user if request.user.is_authenticated else None,
                 creator_name=creator_name,
+                post_type=post_type,
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    services = ServiceRequest.objects.all()
+    # return only needs by default; allow filtering by post_type query param
+    requested_type = request.GET.get("post_type")
+    if requested_type:
+        services = ServiceRequest.objects.filter(post_type=requested_type)
+    else:
+        services = ServiceRequest.objects.filter(post_type="need")
     serializer = ServiceRequestSerializer(services, many=True)
     return Response(serializer.data)
 
