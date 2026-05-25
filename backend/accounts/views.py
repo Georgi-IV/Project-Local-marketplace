@@ -1,5 +1,7 @@
 from django.conf import settings
+from django.contrib.auth import login as auth_login
 from django.core.mail import send_mail
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -18,11 +20,13 @@ def _build_user_payload(user):
     }
 
 
+@csrf_exempt
 @api_view(["POST"])
 def register(request):
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
+        auth_login(request, user)
 
         subject = "Welcome to Local Marketplace"
         message = (
@@ -49,18 +53,34 @@ def register(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["GET"])
+@csrf_exempt
+@api_view(["GET", "POST"])
 def services(request):
+    if request.method == "POST":
+        serializer = ServiceRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            creator_name = None
+            if request.user.is_authenticated:
+                creator_name = request.user.first_name or request.user.email
+            serializer.save(
+                user=request.user if request.user.is_authenticated else None,
+                creator_name=creator_name,
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     services = ServiceRequest.objects.all()
     serializer = ServiceRequestSerializer(services, many=True)
     return Response(serializer.data)
 
 
+@csrf_exempt
 @api_view(["POST"])
 def login(request):
     serializer = LoginSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.validated_data["user"]
+        auth_login(request, user)
         return Response({"user": _build_user_payload(user)}, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

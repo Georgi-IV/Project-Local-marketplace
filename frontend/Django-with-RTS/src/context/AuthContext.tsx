@@ -21,20 +21,19 @@ const LOCAL_STORAGE_USER = "lomarketplace_user";
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserProfile | null>(null);
-
-  useEffect(() => {
+  const [user, setUser] = useState<UserProfile | null>(() => {
     if (typeof window !== "undefined") {
       const storedUser = window.localStorage.getItem(LOCAL_STORAGE_USER);
       if (storedUser) {
         try {
-          setUser(JSON.parse(storedUser));
+          return JSON.parse(storedUser);
         } catch {
           window.localStorage.removeItem(LOCAL_STORAGE_USER);
         }
       }
     }
-  }, []);
+    return null;
+  });
 
   useEffect(() => {
     if (typeof window !== "undefined") {

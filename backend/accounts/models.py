@@ -24,6 +24,7 @@ class ServiceRequest(models.Model):
         blank=True,
         related_name="service_requests",
     )
+    creator_name = models.CharField(max_length=150, blank=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
     location = models.CharField(max_length=255)

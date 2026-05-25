@@ -39,9 +39,27 @@ class RegisterSerializer(serializers.Serializer):
 
 
 class ServiceRequestSerializer(serializers.ModelSerializer):
+    creator = serializers.SerializerMethodField()
+
     class Meta:
         model = ServiceRequest
-        fields = ["id", "title", "description", "location", "urgency", "icon"]
+        fields = [
+            "id",
+            "title",
+            "description",
+            "location",
+            "urgency",
+            "icon",
+            "creator_name",
+            "creator",
+        ]
+
+    def get_creator(self, obj):
+        if obj.creator_name:
+            return obj.creator_name
+        if obj.user:
+            return obj.user.first_name or obj.user.email
+        return "Anonymous"
 
 
 class LoginSerializer(serializers.Serializer):

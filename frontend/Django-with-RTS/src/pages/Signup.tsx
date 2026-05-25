@@ -34,6 +34,7 @@ export default function Signup() {
     try {
       const response = await fetch(BACKEND_URL, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },

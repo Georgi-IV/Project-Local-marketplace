@@ -1,16 +1,98 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./local-sellers.css";
 
+interface ServiceForm {
+  title: string;
+  description: string;
+  location: string;
+}
+
+interface Service {
+  id: number;
+  title: string;
+  description: string;
+  location: string;
+  urgency: "urgent" | "normal";
+  icon: string;
+  creator: string;
+}
+
 export default function LocalSellers() {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const [sellers] = useState<Array<unknown>>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState<ServiceForm>({
+    title: "",
+    description: "",
+    location: "",
+  });
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadServices() {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/services/", {
+          credentials: "include",
+        });
+        if (!response.ok) {
+          throw new Error("Unable to load local sellers.");
+        }
+        const data = await response.json();
+        setServices(data);
+      } catch (error) {
+        setErrorMessage("Unable to load local sellers. Please refresh the page.");
+      }
+    }
+
+    loadServices();
+  }, []);
 
   const handleLoginRedirect = () => {
     if (!isLoggedIn) {
       navigate("/login");
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCreateService = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatusMessage(null);
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/services/", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        setErrorMessage(
+          typeof data === "object"
+            ? Object.values(data).flat().join(" ")
+            : "Unable to create service."
+        );
+        return;
+      }
+
+      setStatusMessage("Service created successfully.");
+      setServices((prev) => [data, ...prev]);
+      setFormData({ title: "", description: "", location: "" });
+      setShowForm(false);
+    } catch (error) {
+      setErrorMessage("Unable to save service. Please try again later.");
     }
   };
 
@@ -20,25 +102,84 @@ export default function LocalSellers() {
         <h1>Local Sellers</h1>
         <p>Explore local sellers and services near you.</p>
 
-        {sellers.length === 0 ? (
-          <div className="empty-state">
+        <div className="empty-state">
+          {services.length === 0 && (
             <div className="empty-state-bubble">
               There are no local sellers around you
             </div>
-            {!isLoggedIn && (
-              <button className="local-sellers-login" onClick={handleLoginRedirect}>
-                Sign in to see local sellers
+          )}
+          <button className="empty-state-add-button" onClick={() => setShowForm(true)}>
+            +
+          </button>
+          {statusMessage && <div className="form-status success">{statusMessage}</div>}
+          {errorMessage && <div className="form-status error">{errorMessage}</div>}
+        </div>
+
+        {showForm && (
+          <form className="add-service-form" onSubmit={handleCreateService}>
+            <h2>Create a new service</h2>
+            <label htmlFor="title">Service Name</label>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              value={formData.title}
+              onChange={handleInputChange}
+              required
+            />
+            <label htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              required
+            />
+            <label htmlFor="location">Location</label>
+            <input
+              id="location"
+              name="location"
+              type="text"
+              value={formData.location}
+              onChange={handleInputChange}
+              required
+            />
+            <div className="form-actions">
+              <button type="submit" className="submit-service-btn">
+                Save Service
               </button>
-            )}
-          </div>
-        ) : (
+              <button type="button" className="cancel-service-btn" onClick={() => setShowForm(false)}>
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+
+        {services.length > 0 && (
           <div className="seller-list">
-            {sellers.map((_, index) => (
-              <div key={index} className="seller-card">
-                <h3>Seller {index + 1}</h3>
+            {services.map((service) => (
+              <div key={service.id} className="seller-card">
+                <div className="seller-top-row">
+                  <span className="service-icon">{service.icon}</span>
+                  <div>
+                    <h3>{service.title}</h3>
+                    <p className="seller-location">📍 {service.location}</p>
+                    <p className="seller-creator">Created by {service.creator}</p>
+                  </div>
+                </div>
+                <p className="seller-description">{service.description}</p>
+                {service.urgency === "urgent" && (
+                  <span className="urgency-badge urgent">URGENT</span>
+                )}
               </div>
             ))}
           </div>
+        )}
+
+        {!isLoggedIn && (
+          <button className="local-sellers-login" onClick={handleLoginRedirect}>
+            Sign in to see local sellers
+          </button>
         )}
       </div>
     </div>
