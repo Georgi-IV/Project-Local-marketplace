@@ -68,7 +68,7 @@ export default function Signup() {
             id="name"
             name="name"
             type="text"
-            placeholder="John Doe"
+            placeholder="Enter text here..."
             value={formData.name}
             onChange={handleChange}
             required
