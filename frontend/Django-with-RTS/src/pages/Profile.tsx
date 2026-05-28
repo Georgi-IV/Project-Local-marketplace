@@ -11,6 +11,7 @@ export default function Profile() {
     email: "",
     dateOfBirth: "",
     phone: "",
+    location: "",
   });
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
@@ -27,6 +28,7 @@ export default function Profile() {
         email: user.email,
         dateOfBirth: user.dateOfBirth || "",
         phone: user.phone || "",
+        location: user.location || "",
       });
     }
   }, [user]);
@@ -61,6 +63,7 @@ export default function Profile() {
           <div className="profile-info">
             <h1>{user.name}</h1>
             <p className="location">{user.email}</p>
+            <p className="location">📍 {user.location || "Location not set"}</p>
             <div className="rating">
               <span className="stars">🎂 {user.dateOfBirth || "Birthday not set"}</span>
             </div>
@@ -106,6 +109,15 @@ export default function Profile() {
                 name="phone"
                 type="tel"
                 value={formData.phone}
+                onChange={handleChange}
+              />
+
+              <label htmlFor="location">Location</label>
+              <input
+                id="location"
+                name="location"
+                type="text"
+                value={formData.location}
                 onChange={handleChange}
               />
 

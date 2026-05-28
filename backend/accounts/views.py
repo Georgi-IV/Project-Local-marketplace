@@ -17,6 +17,7 @@ def _build_user_payload(user):
         "email": user.email,
         "dateOfBirth": profile.date_of_birth.isoformat() if profile and profile.date_of_birth else "",
         "phone": profile.phone if profile else "",
+        "location": profile.location if profile else "",
     }
 
 
@@ -79,6 +80,15 @@ def services(request):
         services = ServiceRequest.objects.filter(post_type=requested_type)
     else:
         services = ServiceRequest.objects.filter(post_type="need")
+
+    requested_location = request.GET.get("location")
+    if requested_location:
+        services = services.filter(location__icontains=requested_location)
+    elif request.user.is_authenticated:
+        profile = getattr(request.user, "profile", None)
+        if profile and profile.location:
+            services = services.filter(location__icontains=profile.location)
+
     serializer = ServiceRequestSerializer(services, many=True)
     return Response(serializer.data)
 

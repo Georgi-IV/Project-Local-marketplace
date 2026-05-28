@@ -12,6 +12,7 @@ export default function Signup() {
     email: "",
     password: "",
     phone: "",
+    location: "",
   });
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
@@ -114,6 +115,17 @@ export default function Signup() {
             placeholder="+1 (555) 000-0000"
             value={formData.phone}
             onChange={handleChange}
+          />
+
+          <label htmlFor="location">Location</label>
+          <input
+            id="location"
+            name="location"
+            type="text"
+            placeholder="City, neighborhood or region"
+            value={formData.location}
+            onChange={handleChange}
+            required
           />
 
           <button type="submit">Sign Up</button>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import "./connect.css";
 
 interface Person {
@@ -11,6 +12,7 @@ interface Person {
 }
 
 export default function Connect() {
+  const { user } = useAuth();
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [people] = useState<Person[]>([
     {
@@ -28,6 +30,10 @@ export default function Connect() {
     },
   ]);
 
+  const visiblePeople = user?.location
+    ? people.filter((person) => person.location.includes(user.location || ""))
+    : people;
+
   return (
     <div className="connect-page">
       <div className="connect-container">
@@ -35,9 +41,10 @@ export default function Connect() {
         <p>Find the most popular and trusted professionals in your area</p>
 
         <div className="people-list">
-          {people.map((person) => (
-            <div key={person.id} className="person-card">
-              <div className="person-main">
+          {visiblePeople.length > 0 ? (
+            visiblePeople.map((person) => (
+              <div key={person.id} className="person-card">
+                <div className="person-main">
                 <div className="person-avatar">{person.avatar}</div>
                 <div className="person-details">
                   <h3>{person.name}</h3>
@@ -70,7 +77,12 @@ export default function Connect() {
                 </div>
               )}
             </div>
-          ))}
+            ))
+          ) : (
+            <div className="placeholder-message">
+              <p>No professionals were found in your location.</p>
+            </div>
+          )}
         </div>
 
         <div className="placeholder-message">

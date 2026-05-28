@@ -20,7 +20,7 @@ interface Service {
 }
 
 export default function LocalSellers() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
   const [services, setServices] = useState<Service[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -35,9 +35,13 @@ export default function LocalSellers() {
   useEffect(() => {
     async function loadServices() {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/services/?post_type=offer", {
-          credentials: "include",
-        });
+        const locationQuery = user?.location ? `&location=${encodeURIComponent(user.location)}` : "";
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/services/?post_type=offer${locationQuery}`,
+          {
+            credentials: "include",
+          }
+        );
         if (!response.ok) {
           throw new Error("Unable to load local sellers.");
         }
@@ -49,7 +53,7 @@ export default function LocalSellers() {
     }
 
     loadServices();
-  }, []);
+  }, [user?.location]);
 
   const handleLoginRedirect = () => {
     if (!isLoggedIn) {

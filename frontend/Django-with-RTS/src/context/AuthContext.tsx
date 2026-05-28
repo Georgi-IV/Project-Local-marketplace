@@ -6,6 +6,7 @@ export type UserProfile = {
   email: string;
   dateOfBirth?: string;
   phone?: string;
+  location?: string;
 };
 
 interface AuthContextType {

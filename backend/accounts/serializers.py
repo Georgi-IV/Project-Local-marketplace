@@ -10,6 +10,7 @@ class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, min_length=8)
     phone = serializers.CharField(required=False, allow_blank=True, max_length=30)
+    location = serializers.CharField(required=False, allow_blank=True, max_length=255)
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
@@ -22,6 +23,7 @@ class RegisterSerializer(serializers.Serializer):
         phone = validated_data.get("phone", "")
         email = validated_data["email"]
         password = validated_data["password"]
+        location = validated_data.get("location", "")
 
         user = User(username=email, email=email)
         if name:
@@ -33,6 +35,7 @@ class RegisterSerializer(serializers.Serializer):
             user=user,
             date_of_birth=date_of_birth,
             phone=phone,
+            location=location,
         )
 
         return user

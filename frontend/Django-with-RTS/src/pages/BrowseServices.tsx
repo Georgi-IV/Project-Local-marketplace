@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import "./browse-services.css";
 
 interface Service {
@@ -12,6 +13,7 @@ interface Service {
 }
 
 export default function BrowseServices() {
+  const { user } = useAuth();
   const [services, setServices] = useState<Service[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
@@ -24,7 +26,10 @@ export default function BrowseServices() {
 
   const loadServices = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/services/?post_type=need");
+      const locationQuery = user?.location ? `&location=${encodeURIComponent(user.location)}` : "";
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/services/?post_type=need${locationQuery}`
+      );
       if (!response.ok) {
         throw new Error("Unable to load services. Please try again later.");
       }
@@ -39,7 +44,7 @@ export default function BrowseServices() {
 
   useEffect(() => {
     loadServices();
-  }, []);
+  }, [user?.location]);
 
   const handleCreate = async () => {
     setSubmitError(null);
