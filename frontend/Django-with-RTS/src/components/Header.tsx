@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./header.css";
@@ -7,7 +6,6 @@ export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isLoggedIn, user } = useAuth();
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const isHome = location.pathname === "/home";
   const isAbout = location.pathname === "/about";
@@ -80,30 +78,6 @@ export default function Header() {
             </button>
           )}
 
-          {/* Hamburger menu */}
-          {isLoggedIn && (
-            <>
-              <button
-                className="hamburger"
-                onClick={() => setMenuOpen(!menuOpen)}
-                aria-label="Toggle menu"
-              >
-                <span></span>
-                <span></span>
-                <span></span>
-              </button>
-
-              {/* Expandable menu */}
-              {menuOpen && (
-                <div className="menu-dropdown">
-                  <a href="#settings">Settings</a>
-                  <a href="#advanced">Advanced</a>
-                  <a href="#info">Info</a>
-                  <a href="#more">More</a>
-                </div>
-              )}
-            </>
-          )}
         </div>
       </div>
     </header>

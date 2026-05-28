@@ -99,57 +99,6 @@
   box-shadow: 0 0 12px rgba(123, 243, 240, 0.2);
 }
 
-.hamburger {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-}
-
-.hamburger span {
-  width: 25px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.7);
-  display: block;
-  border-radius: 2px;
-  transition: all 0.3s ease;
-}
-
-.hamburger:hover span {
-  background: #7bf3f0;
-}
-
-.menu-dropdown {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
-  background: rgba(10, 18, 32, 0.95);
-  border: 1px solid rgba(123, 243, 240, 0.15);
-  border-radius: 12px;
-  padding: 0.5rem 0;
-  min-width: 150px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(10px);
-  z-index: 200;
-}
-
-.menu-dropdown a {
-  display: block;
-  padding: 0.8rem 1.2rem;
-  color: rgba(255, 255, 255, 0.8);
-  text-decoration: none;
-  transition: all 0.2s ease;
-  font-size: 0.95rem;
-}
-
-.menu-dropdown a:hover {
-  background: rgba(123, 243, 240, 0.1);
-  color: #7bf3f0;
-  padding-left: 1.5rem;
-}
 
 @media (max-width: 768px) {
   .header-content {
