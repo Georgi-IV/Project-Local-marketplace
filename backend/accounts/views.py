@@ -6,8 +6,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .serializers import LoginSerializer, RegisterSerializer, ServiceRequestSerializer
-from .models import ServiceRequest
+from .serializers import LoginSerializer, RegisterSerializer, ServiceRequestSerializer, ProfileSerializer
+from .models import ServiceRequest, Profile
 
 
 def _build_user_payload(user):
@@ -103,3 +103,51 @@ def login(request):
         return Response({"user": _build_user_payload(user)}, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@csrf_exempt
+@api_view(["GET"])
+def profiles(request):
+    """
+    Retrieve all profiles with optional location filtering.
+    
+    Query Parameters:
+    - location (optional): Filter profiles by location (case-insensitive substring match)
+    
+    Returns:
+    List of profiles with id, name, location, phone, and date_of_birth
+    """
+    all_profiles = Profile.objects.all()
+    
+    requested_location = request.GET.get("location")
+    if requested_location:
+        all_profiles = all_profiles.filter(location__icontains=requested_location)
+    
+    serializer = ProfileSerializer(all_profiles, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(["GET"])
+def my_profile(request):
+    """
+    Retrieve the current authenticated user's profile.
+    
+    Returns:
+    Profile object with id, name, location, phone, and date_of_birth
+    """
+    if not request.user.is_authenticated:
+        return Response(
+            {"error": "User not authenticated"},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+    
+    try:
+        profile = request.user.profile
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Profile.DoesNotExist:
+        return Response(
+            {"error": "Profile not found for this user"},
+            status=status.HTTP_404_NOT_FOUND
+        )

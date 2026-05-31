@@ -66,6 +66,21 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
         return "Anonymous"
 
 
+class ProfileSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Profile
+        fields = ["id", "name", "location", "phone", "date_of_birth"]
+
+    def get_id(self, obj):
+        return obj.user.id
+
+    def get_name(self, obj):
+        return obj.user.first_name or obj.user.email
+
+
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
