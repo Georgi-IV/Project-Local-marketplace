@@ -21,6 +21,7 @@ interface Person {
 
 export default function Connect() {
   const { user } = useAuth();
+  const API_BASE = import.meta.env.VITE_API_BASE || "";
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [people, setPeople] = useState<Person[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,7 @@ export default function Connect() {
         if (user) {
           try {
             const myProfileResponse = await fetch(
-              "http://localhost:8000/api/my-profile/",
+              `${API_BASE}/api/my-profile/`,
               {
                 credentials: "include", // Send cookies for authentication
               },
@@ -66,8 +67,10 @@ export default function Connect() {
 
         // Build URL with location filter if user has a location
         const url = user?.location
-          ? `http://localhost:8000/api/profiles/?location=${encodeURIComponent(user.location)}`
-          : "http://localhost:8000/api/profiles/";
+          ? `${API_BASE}/api/profiles/?location=${encodeURIComponent(
+              user.location,
+            )}`
+          : `${API_BASE}/api/profiles/`;
 
         const response = await fetch(url);
         if (!response.ok) {
@@ -108,7 +111,7 @@ export default function Connect() {
     };
 
     fetchProfiles();
-  }, [user?.location, user]);
+  }, [user?.location, user, API_BASE]);
 
   const visiblePeople = user?.location
     ? people.filter((person) => person.location.includes(user.location || ""))
