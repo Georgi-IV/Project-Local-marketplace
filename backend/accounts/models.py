@@ -36,6 +36,7 @@ class ServiceRequest(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     location = models.CharField(max_length=255)
+    phone = models.CharField(max_length=30, blank=True)
     urgency = models.CharField(max_length=10, choices=URGENCY_CHOICES, default="normal")
     icon = models.CharField(max_length=5, default="🛠️")
     created_at = models.DateTimeField(auto_now_add=True)

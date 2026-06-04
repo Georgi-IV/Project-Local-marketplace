@@ -7,6 +7,7 @@ interface Service {
   title: string;
   description: string;
   location: string;
+  phone: string;
   urgency: "urgent" | "soon" | "whenever" | "normal";
   icon: string;
   creator: string;
@@ -14,21 +15,28 @@ interface Service {
 
 export default function BrowseServices() {
   const { user } = useAuth();
+  const API_BASE = import.meta.env.VITE_API_BASE || "";
   const [services, setServices] = useState<Service[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
-  const [urgency, setUrgency] = useState<"urgent" | "soon" | "whenever" | "normal">("normal");
+  const [phone, setPhone] = useState("");
+  const [urgency, setUrgency] = useState<
+    "urgent" | "soon" | "whenever" | "normal"
+  >("normal");
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const loadServices = async () => {
     try {
-      const locationQuery = user?.location ? `&location=${encodeURIComponent(user.location)}` : "";
+      const locationQuery = user?.location
+        ? `&location=${encodeURIComponent(user.location)}`
+        : "";
       const response = await fetch(
-        `http://127.0.0.1:8000/api/services/?post_type=need${locationQuery}`
+        `${API_BASE}/api/services/?post_type=need${locationQuery}`,
       );
       if (!response.ok) {
         throw new Error("Unable to load services. Please try again later.");
@@ -37,7 +45,7 @@ export default function BrowseServices() {
       setServices(data);
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : "Could not fetch services."
+        error instanceof Error ? error.message : "Could not fetch services.",
       );
     }
   };
@@ -59,11 +67,12 @@ export default function BrowseServices() {
         title,
         description,
         location,
+        phone,
         urgency,
         icon: "📝",
       };
 
-      const response = await fetch("http://127.0.0.1:8000/api/services/", {
+      const response = await fetch(`${API_BASE}/api/services/`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -75,7 +84,7 @@ export default function BrowseServices() {
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
-          errorData.detail || "Could not save your request. Please try again."
+          errorData.detail || "Could not save your request. Please try again.",
         );
       }
 
@@ -84,9 +93,12 @@ export default function BrowseServices() {
       setTitle("");
       setDescription("");
       setLocation("");
+      setPhone("");
       setUrgency("normal");
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Request failed.");
+      setSubmitError(
+        error instanceof Error ? error.message : "Request failed.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -139,6 +151,15 @@ export default function BrowseServices() {
               />
             </label>
             <label>
+              Contact phone
+              <input
+                type="tel"
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
+                placeholder="Contact phone"
+              />
+            </label>
+            <label>
               How fast do you need it?
               <select
                 value={urgency}
@@ -148,7 +169,7 @@ export default function BrowseServices() {
                       | "urgent"
                       | "soon"
                       | "whenever"
-                      | "normal"
+                      | "normal",
                   )
                 }
               >
@@ -207,9 +228,28 @@ export default function BrowseServices() {
                 </div>
                 <p className="service-description">{service.description}</p>
                 <div className="service-meta">Posted by {service.creator}</div>
+                {expandedId === service.id && (
+                  <div className="service-details">
+                    <p>
+                      <strong>Phone:</strong>{" "}
+                      {service.phone ? service.phone : "Not provided"}
+                    </p>
+                  </div>
+                )}
                 <div className="service-footer">
                   <span className="location">📍 {service.location}</span>
-                  <button className="btn-accept">View Details</button>
+                  <button
+                    className="btn-accept"
+                    onClick={() =>
+                      setExpandedId(
+                        expandedId === service.id ? null : service.id,
+                      )
+                    }
+                  >
+                    {expandedId === service.id
+                      ? "Hide Details"
+                      : "View Details"}
+                  </button>
                 </div>
               </div>
             ))}

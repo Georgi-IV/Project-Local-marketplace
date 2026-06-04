@@ -52,6 +52,7 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "location",
+            "phone",
             "urgency",
             "icon",
             "creator_name",
