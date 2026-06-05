@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Profile, ServiceRequest
+from .models import Profile, ServiceRequest, Review
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -41,8 +41,26 @@ class RegisterSerializer(serializers.Serializer):
         return user
 
 
+class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Review
+        fields = ["id", "author", "rating", "comment", "created_at"]
+
+    def get_author(self, obj):
+        if obj.author_name:
+            return obj.author_name
+        if obj.author:
+            return obj.author.first_name or obj.author.email
+        return "Anonymous"
+
+
 class ServiceRequestSerializer(serializers.ModelSerializer):
     creator = serializers.SerializerMethodField()
+    review_count = serializers.SerializerMethodField()
+    rating_average = serializers.SerializerMethodField()
+    reviews = ReviewSerializer(many=True, read_only=True)
 
     class Meta:
         model = ServiceRequest
@@ -57,6 +75,9 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
             "icon",
             "creator_name",
             "creator",
+            "review_count",
+            "rating_average",
+            "reviews",
         ]
 
     def get_creator(self, obj):
@@ -65,6 +86,15 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
         if obj.user:
             return obj.user.first_name or obj.user.email
         return "Anonymous"
+
+    def get_review_count(self, obj):
+        return obj.reviews.count()
+
+    def get_rating_average(self, obj):
+        reviews = obj.reviews.all()
+        if not reviews:
+            return None
+        return round(sum(review.rating for review in reviews) / reviews.count(), 2)
 
 
 class ProfileSerializer(serializers.ModelSerializer):

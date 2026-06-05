@@ -5,19 +5,28 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 
-from .serializers import LoginSerializer, RegisterSerializer, ServiceRequestSerializer, ProfileSerializer
-from .models import ServiceRequest, Profile
+from .serializers import (
+    LoginSerializer,
+    RegisterSerializer,
+    ServiceRequestSerializer,
+    ProfileSerializer,
+    ReviewSerializer,
+)
+from .models import ServiceRequest, Profile, Review
 
 
 def _build_user_payload(user):
     profile = getattr(user, "profile", None)
+    token, _ = Token.objects.get_or_create(user=user)
     return {
         "name": user.first_name or "",
         "email": user.email,
         "dateOfBirth": profile.date_of_birth.isoformat() if profile and profile.date_of_birth else "",
         "phone": profile.phone if profile else "",
         "location": profile.location if profile else "",
+        "token": token.key,
     }
 
 
@@ -91,6 +100,58 @@ def services(request):
 
     serializer = ServiceRequestSerializer(services, many=True)
     return Response(serializer.data)
+
+
+@csrf_exempt
+@api_view(["POST"])
+def service_reviews(request, service_id):
+    if not request.user.is_authenticated:
+        return Response(
+            {"error": "Authentication required to post a review."},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    try:
+        service = ServiceRequest.objects.get(id=service_id)
+    except ServiceRequest.DoesNotExist:
+        return Response(
+            {"error": "Service not found."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    rating = request.data.get("rating")
+    comment = request.data.get("comment", "").strip()
+
+    if rating is None:
+        return Response(
+            {"rating": ["Rating is required."]},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        rating = int(rating)
+    except (TypeError, ValueError):
+        return Response(
+            {"rating": ["Rating must be a number between 1 and 5."]},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if rating < 1 or rating > 5:
+        return Response(
+            {"rating": ["Rating must be between 1 and 5."]},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    author_name = request.user.first_name or request.user.email or "Anonymous"
+    review = Review.objects.create(
+        service=service,
+        author=request.user,
+        author_name=author_name,
+        rating=rating,
+        comment=comment,
+    )
+    serializer = ReviewSerializer(review)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 @csrf_exempt

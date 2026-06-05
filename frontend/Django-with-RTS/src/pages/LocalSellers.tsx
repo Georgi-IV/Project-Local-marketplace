@@ -3,11 +3,33 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./local-sellers.css";
 
+function getCsrfToken(): string {
+  const name = "csrftoken";
+  let cookieValue = "";
+  if (document.cookie && document.cookie !== "") {
+    document.cookie.split(";").forEach((c) => {
+      const cookie = c.trim();
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+      }
+    });
+  }
+  return cookieValue;
+}
+
 interface ServiceForm {
   title: string;
   description: string;
   location: string;
   phone: string;
+}
+
+interface Review {
+  id: number;
+  author: string;
+  rating: number;
+  comment: string;
+  created_at: string;
 }
 
 interface Service {
@@ -16,9 +38,12 @@ interface Service {
   description: string;
   location: string;
   phone: string;
-  urgency: "urgent" | "normal";
+  urgency: string;
   icon: string;
   creator: string;
+  review_count?: number;
+  rating_average?: number | null;
+  reviews: Review[];
 }
 
 export default function LocalSellers() {
@@ -35,6 +60,12 @@ export default function LocalSellers() {
   });
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [reviewInputs, setReviewInputs] = useState<
+    Record<number, { rating: number; comment: string }>
+  >({});
+  const [reviewStatus, setReviewStatus] = useState<
+    Record<number, { success?: string; error?: string }>
+  >({});
 
   useEffect(() => {
     async function loadServices() {
@@ -111,6 +142,113 @@ export default function LocalSellers() {
       setErrorMessage("Unable to save service. Please try again later.");
     }
   };
+
+  const handleReviewInputChange = (
+    serviceId: number,
+    field: "rating" | "comment",
+    value: string,
+  ) => {
+    setReviewInputs((prev) => ({
+      ...prev,
+      [serviceId]: {
+        rating:
+          field === "rating"
+            ? Number(value) || 1
+            : prev[serviceId]?.rating || 5,
+        comment:
+          field === "comment"
+            ? value
+            : prev[serviceId]?.comment || "",
+      },
+    }));
+  };
+
+  const handleSubmitReview = async (serviceId: number) => {
+    setReviewStatus((prev) => ({
+      ...prev,
+      [serviceId]: { success: undefined, error: undefined },
+    }));
+
+    const reviewData = reviewInputs[serviceId] || { rating: 5, comment: "" };
+
+    try {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+
+      if (user?.token) {
+        headers["Authorization"] = `Token ${user.token}`;
+      } else {
+        const csrfToken = getCsrfToken();
+        if (csrfToken) {
+          headers["X-CSRFToken"] = csrfToken;
+        }
+      }
+
+      const response = await fetch(
+        `${API_BASE}/api/services/${serviceId}/reviews/`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers,
+          body: JSON.stringify(reviewData),
+        },
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        setReviewStatus((prev) => ({
+          ...prev,
+          [serviceId]: {
+            error:
+              typeof data === "object"
+                ? Object.values(data).flat().join(" ")
+                : "Unable to submit review.",
+          },
+        }));
+        return;
+      }
+
+      setServices((prev) =>
+        prev.map((service) => {
+          if (service.id !== serviceId) return service;
+          const updatedReviews = [...(service.reviews || []), data];
+          const totalRating = updatedReviews.reduce(
+            (sum, review) => sum + review.rating,
+            0,
+          );
+          const average = updatedReviews.length
+            ? totalRating / updatedReviews.length
+            : null;
+          return {
+            ...service,
+            reviews: updatedReviews,
+            review_count: updatedReviews.length,
+            rating_average: average,
+          };
+        }),
+      );
+      setReviewInputs((prev) => ({
+        ...prev,
+        [serviceId]: { rating: 5, comment: "" },
+      }));
+      setReviewStatus((prev) => ({
+        ...prev,
+        [serviceId]: {
+          success: "Review submitted successfully.",
+        },
+      }));
+    } catch (error) {
+      setReviewStatus((prev) => ({
+        ...prev,
+        [serviceId]: {
+          error: "Unable to submit review. Please try again later.",
+        },
+      }));
+    }
+  };
+
+  const formatStars = (rating: number) => "⭐".repeat(Math.max(1, Math.min(5, rating)));
 
   return (
     <div className="local-sellers-page">
@@ -209,8 +347,79 @@ export default function LocalSellers() {
                   </div>
                 </div>
                 <p className="seller-description">{service.description}</p>
+                {service.rating_average != null && (
+                  <p className="seller-rating">
+                    ⭐ {service.rating_average.toFixed(1)} / 5 
+                    {service.review_count ? `(${service.review_count} reviews)` : ""}
+                  </p>
+                )}
                 {service.urgency === "urgent" && (
                   <span className="urgency-badge urgent">URGENT</span>
+                )}
+
+                {service.reviews && service.reviews.length > 0 && (
+                  <div className="review-list">
+                    <h4>Reviews</h4>
+                    {service.reviews.map((review) => (
+                      <div key={review.id} className="review-card">
+                        <div className="review-meta">
+                          <strong>{review.author}</strong>
+                          <span>{formatStars(review.rating)} {review.rating}</span>
+                        </div>
+                        <p>{review.comment || "No comment provided."}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {isLoggedIn ? (
+                  <div className="review-form">
+                    <h4>Leave a review</h4>
+                    <label htmlFor={`rating-${service.id}`}>Rating</label>
+                    <select
+                      id={`rating-${service.id}`}
+                      value={reviewInputs[service.id]?.rating ?? 5}
+                      onChange={(e) =>
+                        handleReviewInputChange(service.id, "rating", e.target.value)
+                      }
+                    >
+                      {[5, 4, 3, 2, 1].map((score) => (
+                        <option key={score} value={score}>
+                          {score} star{score !== 1 ? "s" : ""}
+                        </option>
+                      ))}
+                    </select>
+                    <label htmlFor={`comment-${service.id}`}>Comment</label>
+                    <textarea
+                      id={`comment-${service.id}`}
+                      value={reviewInputs[service.id]?.comment ?? ""}
+                      onChange={(e) =>
+                        handleReviewInputChange(service.id, "comment", e.target.value)
+                      }
+                      placeholder="Describe your experience"
+                    />
+                    <button
+                      type="button"
+                      className="submit-service-btn"
+                      onClick={() => handleSubmitReview(service.id)}
+                    >
+                      Submit Review
+                    </button>
+                    {reviewStatus[service.id]?.success && (
+                      <div className="form-status success">
+                        {reviewStatus[service.id]?.success}
+                      </div>
+                    )}
+                    {reviewStatus[service.id]?.error && (
+                      <div className="form-status error">
+                        {reviewStatus[service.id]?.error}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="review-login-prompt">
+                    Sign in to leave a review for this seller.
+                  </p>
                 )}
               </div>
             ))}
