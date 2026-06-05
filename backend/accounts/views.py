@@ -189,13 +189,13 @@ def profiles(request):
 
 
 @csrf_exempt
-@api_view(["GET"])
+@api_view(["GET", "PUT"])
 def my_profile(request):
     """
-    Retrieve the current authenticated user's profile.
+    Retrieve or update the current authenticated user's profile.
     
-    Returns:
-    Profile object with id, name, location, phone, and date_of_birth
+    GET: Returns Profile object with id, name, location, phone, and date_of_birth
+    PUT: Updates profile fields and returns updated profile
     """
     if not request.user.is_authenticated:
         return Response(
@@ -205,10 +205,34 @@ def my_profile(request):
     
     try:
         profile = request.user.profile
-        serializer = ProfileSerializer(profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
     except Profile.DoesNotExist:
         return Response(
             {"error": "Profile not found for this user"},
             status=status.HTTP_404_NOT_FOUND
         )
+    
+    if request.method == "GET":
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    if request.method == "PUT":
+        # Update user first_name from 'name' field
+        if "name" in request.data:
+            request.user.first_name = request.data["name"]
+            request.user.save()
+        
+        # Update profile fields
+        if "date_of_birth" in request.data or "dateOfBirth" in request.data:
+            date_str = request.data.get("date_of_birth") or request.data.get("dateOfBirth")
+            if date_str:
+                profile.date_of_birth = date_str
+        
+        if "phone" in request.data:
+            profile.phone = request.data["phone"]
+        
+        if "location" in request.data:
+            profile.location = request.data["location"]
+        
+        profile.save()
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)

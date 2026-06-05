@@ -49,10 +49,44 @@ export default function Profile() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateProfile(formData);
-    setStatusMessage("Profile updated successfully.");
+    setStatusMessage(null);
+
+    try {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+
+      if (user?.token) {
+        headers["Authorization"] = `Token ${user.token}`;
+      }
+
+      const API_BASE = import.meta.env.VITE_API_BASE || "";
+      const response = await fetch(`${API_BASE}/api/my-profile/`, {
+        method: "PUT",
+        credentials: "include",
+        headers,
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setStatusMessage(
+          typeof data === "object"
+            ? Object.values(data).flat().join(" ")
+            : "Failed to update profile."
+        );
+        return;
+      }
+
+      // Update local context with new data
+      updateProfile(formData);
+      setStatusMessage("Profile updated successfully.");
+    } catch (error) {
+      setStatusMessage("Unable to save profile. Please try again later.");
+    }
   };
 
   return (
