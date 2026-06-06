@@ -154,6 +154,20 @@
   background: #57dfe1;
 }
 
+.contact-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 10px;
+  background: rgba(123, 243, 240, 0.08);
+  border: 1px solid rgba(123, 243, 240, 0.2);
+  color: #ffffff;
+}
+
+.contact-info p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
 .placeholder-message {
   text-align: center;
   padding: 2rem;

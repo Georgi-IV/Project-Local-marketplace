@@ -17,12 +17,14 @@ interface Person {
   rating: number;
   skills: string[];
   avatar: string;
+  phone: string;
 }
 
 export default function Connect() {
   const { user } = useAuth();
   const API_BASE = import.meta.env.VITE_API_BASE || "";
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [selectedContactId, setSelectedContactId] = useState<number | null>(null);
   const [people, setPeople] = useState<Person[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,6 +60,7 @@ export default function Connect() {
                   .join("")
                   .toUpperCase()
                   .slice(0, 2),
+                phone: myProfile.phone || "",
               });
             }
           } catch (err) {
@@ -94,6 +97,7 @@ export default function Connect() {
                 .toUpperCase()
                 .slice(0, 2)
             : "??",
+          phone: profile.phone || "",
         }));
 
         // Combine user's profile with other profiles (avoiding duplicates)
@@ -182,9 +186,29 @@ export default function Connect() {
                         <span className="skill">Professional available</span>
                       )}
                     </div>
-                    <button className="btn-contact">
-                      Contact {person.name}
+                    <button
+                      className="btn-contact"
+                      onClick={() =>
+                        setSelectedContactId(
+                          selectedContactId === person.id ? null : person.id,
+                        )
+                      }
+                    >
+                      {selectedContactId === person.id
+                        ? "Hide contact info"
+                        : `Contact ${person.name}`}
                     </button>
+
+                    {selectedContactId === person.id && (
+                      <div className="contact-info">
+                        <p>
+                          <strong>Phone:</strong>{" "}
+                          {person.phone
+                            ? person.phone
+                            : "Phone number not available"}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
