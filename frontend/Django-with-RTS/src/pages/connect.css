@@ -154,6 +154,83 @@
   background: #57dfe1;
 }
 
+.review-form {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.review-form label {
+  color: #cdefff;
+  font-size: 0.95rem;
+}
+
+.review-form select,
+.review-form textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(123, 243, 240, 0.25);
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+}
+
+.review-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.btn-submit-review {
+  width: 100%;
+  padding: 0.9rem;
+  border-radius: 8px;
+  border: none;
+  background: #7bf3f0;
+  color: #07111d;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-submit-review:hover {
+  background: #57dfe1;
+}
+
+.review-status {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.review-status.success {
+  color: #8dfbd9;
+}
+
+.review-status.error {
+  color: #ff9aa2;
+}
+
+.review-guest-message {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  border: 1px solid rgba(123, 243, 240, 0.15);
+}
+
+.review-guest-message a {
+  color: #7bf3f0;
+  text-decoration: underline;
+}
+
+.review-count {
+  margin-left: 0.75rem;
+  color: #ffffffb3;
+  font-size: 0.95rem;
+}
+
 .contact-info {
   margin-top: 1rem;
   padding: 1rem;

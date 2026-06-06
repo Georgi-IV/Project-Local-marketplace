@@ -13,8 +13,9 @@ from .serializers import (
     ServiceRequestSerializer,
     ProfileSerializer,
     ReviewSerializer,
+    ProfileReviewSerializer,
 )
-from .models import ServiceRequest, Profile, Review
+from .models import ServiceRequest, Profile, Review, ProfileReview
 
 
 def _build_user_payload(user):
@@ -151,6 +152,62 @@ def service_reviews(request, service_id):
         comment=comment,
     )
     serializer = ReviewSerializer(review)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@csrf_exempt
+@api_view(["GET", "POST"])
+def profile_reviews(request, profile_id):
+    try:
+        profile = Profile.objects.get(user_id=profile_id)
+    except Profile.DoesNotExist:
+        return Response(
+            {"error": "Profile not found."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    if request.method == "GET":
+        serializer = ProfileReviewSerializer(profile.profile_reviews.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if not request.user.is_authenticated:
+        return Response(
+            {"error": "Authentication required to post a review."},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    rating = request.data.get("rating")
+    comment = request.data.get("comment", "").strip()
+
+    if rating is None:
+        return Response(
+            {"rating": ["Rating is required."]},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        rating = int(rating)
+    except (TypeError, ValueError):
+        return Response(
+            {"rating": ["Rating must be a number between 1 and 5."]},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if rating < 1 or rating > 5:
+        return Response(
+            {"rating": ["Rating must be between 1 and 5."]},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    author_name = request.user.first_name or request.user.email or "Anonymous"
+    review = ProfileReview.objects.create(
+        profile=profile,
+        author=request.user,
+        author_name=author_name,
+        rating=rating,
+        comment=comment,
+    )
+    serializer = ProfileReviewSerializer(review)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 

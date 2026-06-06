@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import Profile, ServiceRequest, Review
+from .models import Profile, ServiceRequest, Review, ProfileReview
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -56,6 +56,21 @@ class ReviewSerializer(serializers.ModelSerializer):
         return "Anonymous"
 
 
+class ProfileReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProfileReview
+        fields = ["id", "author", "rating", "comment", "created_at"]
+
+    def get_author(self, obj):
+        if obj.author_name:
+            return obj.author_name
+        if obj.author:
+            return obj.author.first_name or obj.author.email
+        return "Anonymous"
+
+
 class ServiceRequestSerializer(serializers.ModelSerializer):
     creator = serializers.SerializerMethodField()
     review_count = serializers.SerializerMethodField()
@@ -100,16 +115,35 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
+    review_count = serializers.SerializerMethodField()
+    rating_average = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
-        fields = ["id", "name", "location", "phone", "date_of_birth"]
+        fields = [
+            "id",
+            "name",
+            "location",
+            "phone",
+            "date_of_birth",
+            "review_count",
+            "rating_average",
+        ]
 
     def get_id(self, obj):
         return obj.user.id
 
     def get_name(self, obj):
         return obj.user.first_name or obj.user.email
+
+    def get_review_count(self, obj):
+        return obj.profile_reviews.count()
+
+    def get_rating_average(self, obj):
+        reviews = obj.profile_reviews.all()
+        if not reviews:
+            return None
+        return round(sum(review.rating for review in reviews) / reviews.count(), 2)
 
 
 class LoginSerializer(serializers.Serializer):
