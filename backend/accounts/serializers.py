@@ -1,3 +1,5 @@
+from typing import Any, Dict, Optional
+
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
@@ -12,12 +14,12 @@ class RegisterSerializer(serializers.Serializer):
     phone = serializers.CharField(required=False, allow_blank=True, max_length=30)
     location = serializers.CharField(required=False, allow_blank=True, max_length=255)
 
-    def validate_email(self, value):
+    def validate_email(self, value: str) -> str:
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError("This email is already registered.")
         return value
 
-    def create(self, validated_data):
+    def create(self, validated_data: Dict[str, Any]) -> User:
         name = validated_data.get("name", "")
         date_of_birth = validated_data.get("date_of_birth")
         phone = validated_data.get("phone", "")
@@ -48,7 +50,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = ["id", "author", "rating", "comment", "created_at"]
 
-    def get_author(self, obj):
+    def get_author(self, obj: Review) -> str:
         if obj.author_name:
             return obj.author_name
         if obj.author:
@@ -63,7 +65,7 @@ class ProfileReviewSerializer(serializers.ModelSerializer):
         model = ProfileReview
         fields = ["id", "author", "rating", "comment", "created_at"]
 
-    def get_author(self, obj):
+    def get_author(self, obj: ProfileReview) -> str:
         if obj.author_name:
             return obj.author_name
         if obj.author:
@@ -95,17 +97,17 @@ class ServiceRequestSerializer(serializers.ModelSerializer):
             "reviews",
         ]
 
-    def get_creator(self, obj):
+    def get_creator(self, obj: ServiceRequest) -> str:
         if obj.creator_name:
             return obj.creator_name
         if obj.user:
             return obj.user.first_name or obj.user.email
         return "Anonymous"
 
-    def get_review_count(self, obj):
+    def get_review_count(self, obj: ServiceRequest) -> int:
         return obj.reviews.count()
 
-    def get_rating_average(self, obj):
+    def get_rating_average(self, obj: ServiceRequest) -> Optional[float]:
         reviews = obj.reviews.all()
         if not reviews:
             return None
@@ -130,16 +132,16 @@ class ProfileSerializer(serializers.ModelSerializer):
             "rating_average",
         ]
 
-    def get_id(self, obj):
+    def get_id(self, obj: Profile) -> int:
         return obj.user.id
 
-    def get_name(self, obj):
+    def get_name(self, obj: Profile) -> str:
         return obj.user.first_name or obj.user.email
 
-    def get_review_count(self, obj):
+    def get_review_count(self, obj: Profile) -> int:
         return obj.profile_reviews.count()
 
-    def get_rating_average(self, obj):
+    def get_rating_average(self, obj: Profile) -> Optional[float]:
         reviews = obj.profile_reviews.all()
         if not reviews:
             return None
@@ -150,7 +152,7 @@ class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
-    def validate(self, attrs):
+    def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
         from django.contrib.auth import authenticate
 
         email = attrs.get("email")

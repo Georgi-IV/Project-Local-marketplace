@@ -1,9 +1,12 @@
+from typing import Any, Dict, Optional
+
 from django.conf import settings
 from django.contrib.auth import login as auth_login
 from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
@@ -18,7 +21,7 @@ from .serializers import (
 from .models import ServiceRequest, Profile, Review, ProfileReview
 
 
-def _build_user_payload(user):
+def _build_user_payload(user: Any) -> Dict[str, Any]:
     profile = getattr(user, "profile", None)
     token, _ = Token.objects.get_or_create(user=user)
     return {
@@ -33,7 +36,7 @@ def _build_user_payload(user):
 
 @csrf_exempt
 @api_view(["POST"])
-def register(request):
+def register(request: Request) -> Response:
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
@@ -66,7 +69,7 @@ def register(request):
 
 @csrf_exempt
 @api_view(["GET", "POST"])
-def services(request):
+def services(request: Request) -> Response:
     if request.method == "POST":
         serializer = ServiceRequestSerializer(data=request.data)
         if serializer.is_valid():
@@ -105,7 +108,7 @@ def services(request):
 
 @csrf_exempt
 @api_view(["POST"])
-def service_reviews(request, service_id):
+def service_reviews(request: Request, service_id: int) -> Response:
     if not request.user.is_authenticated:
         return Response(
             {"error": "Authentication required to post a review."},
@@ -157,7 +160,7 @@ def service_reviews(request, service_id):
 
 @csrf_exempt
 @api_view(["GET", "POST"])
-def profile_reviews(request, profile_id):
+def profile_reviews(request: Request, profile_id: int) -> Response:
     try:
         profile = Profile.objects.get(user_id=profile_id)
     except Profile.DoesNotExist:
@@ -213,7 +216,7 @@ def profile_reviews(request, profile_id):
 
 @csrf_exempt
 @api_view(["POST"])
-def login(request):
+def login(request: Request) -> Response:
     serializer = LoginSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.validated_data["user"]
@@ -225,7 +228,7 @@ def login(request):
 
 @csrf_exempt
 @api_view(["GET"])
-def profiles(request):
+def profiles(request: Request) -> Response:
     """
     Retrieve all profiles with optional location filtering.
     
@@ -247,7 +250,7 @@ def profiles(request):
 
 @csrf_exempt
 @api_view(["GET", "PUT"])
-def my_profile(request):
+def my_profile(request: Request) -> Response:
     """
     Retrieve or update the current authenticated user's profile.
     
